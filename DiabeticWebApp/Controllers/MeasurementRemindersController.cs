@@ -54,7 +54,7 @@ namespace DiabeticWebApp.Controllers
             }
 
             var userId = GetCurrentUserId();
-            if (!_measurementRemindersService.MeasurementReminderExists(userId, id))
+            if (!_measurementRemindersService.DoesMeasurementReminderExists(userId, id))
             {
                 return StatusCode(HttpStatusCode.NotFound);
             }
@@ -68,7 +68,7 @@ namespace DiabeticWebApp.Controllers
         public IHttpActionResult DeleteMeasurementReminder(int id)
         {
             var userId = GetCurrentUserId();
-            if (!_measurementRemindersService.MeasurementReminderExists(userId, id))
+            if (!_measurementRemindersService.DoesMeasurementReminderExists(userId, id))
             {
                 return StatusCode(HttpStatusCode.NotFound);
             }

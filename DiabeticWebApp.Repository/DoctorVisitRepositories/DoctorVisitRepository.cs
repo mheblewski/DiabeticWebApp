@@ -53,7 +53,7 @@ namespace DiabeticWebApp.Repository.DoctorVisitRepositories
             _db.SaveChanges();
         }
 
-        public bool DoctorVisitExists(string userId, int id)
+        public bool DoesDoctorVisitExists(string userId, int id)
         {
             return _db.DoctorVisits
                        .Where(d => d.UserId == userId)

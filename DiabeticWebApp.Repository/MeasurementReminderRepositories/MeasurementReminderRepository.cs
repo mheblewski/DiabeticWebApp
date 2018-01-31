@@ -47,7 +47,7 @@ namespace DiabeticWebApp.Repository.MeasurementReminderRepositories
             _db.SaveChanges();
         }
 
-        public bool MeasurementReminderExists(string userId, int measurementReminderId)
+        public bool DoesMeasurementReminderExists(string userId, int measurementReminderId)
         {
             return _db.MeasurementReminders
                        .Where(m => m.UserId == userId)

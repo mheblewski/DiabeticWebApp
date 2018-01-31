@@ -74,7 +74,7 @@ namespace DiabeticWebApp.Controllers
             }
 
             var userId = GetCurrentUserId();
-            if (!_measurementsService.MeasurementExists(userId, id))
+            if (!_measurementsService.DoesMeasurementExists(userId, id))
             {
                 return StatusCode(HttpStatusCode.NotFound);
             }
@@ -102,7 +102,7 @@ namespace DiabeticWebApp.Controllers
         public IHttpActionResult DeleteMeasurement(int id)
         {
             var userId = GetCurrentUserId();
-            if (!_measurementsService.MeasurementExists(userId, id))
+            if (!_measurementsService.DoesMeasurementExists(userId, id))
             {
                 return StatusCode(HttpStatusCode.NotFound);
             }

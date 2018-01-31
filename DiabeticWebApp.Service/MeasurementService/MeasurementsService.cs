@@ -45,9 +45,9 @@ namespace DiabeticWebApp.Service.MeasurementService
             _repository.UpdateMeasurement(userId, measurementDto);
         }
 
-        public bool MeasurementExists(string userId, int measurementId)
+        public bool DoesMeasurementExists(string userId, int measurementId)
         {
-            return _repository.MeasurementExists(userId, measurementId);
+            return _repository.DoesMeasurementExists(userId, measurementId);
         }
     }
 }

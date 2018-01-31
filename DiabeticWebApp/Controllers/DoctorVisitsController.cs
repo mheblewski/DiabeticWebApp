@@ -53,7 +53,7 @@ namespace DiabeticWebApp.Controllers
             }
 
             var userId = GetCurrentUserId();
-            if (!_doctorVisitsService.DoctorVisitExists(userId, id))
+            if (!_doctorVisitsService.DoesDoctorVisitExists(userId, id))
             {
                 return StatusCode(HttpStatusCode.NotFound);
             }
@@ -67,7 +67,7 @@ namespace DiabeticWebApp.Controllers
         public IHttpActionResult DeleteDoctorVisits(int id)
         {
             var userId = GetCurrentUserId();
-            if (!_doctorVisitsService.DoctorVisitExists(userId, id))
+            if (!_doctorVisitsService.DoesDoctorVisitExists(userId, id))
             {
                 return StatusCode(HttpStatusCode.NotFound);
             }

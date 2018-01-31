@@ -13,7 +13,7 @@ namespace DiabeticWebApp.Service.MeasurementReminderService
         List<MeasurementReminderDto> GetMeasurementReminders(string userId);
         void AddMeasurementReminder(string userId, MeasurementReminderDto measurementReminderDto);
         void UpdateMeasurementReminder(string userId, MeasurementReminderDto measurementReminderDto);
-        bool MeasurementReminderExists(string userId, int measurementReminderId);
+        bool DoesMeasurementReminderExists(string userId, int measurementReminderId);
         void DeleteMeasurementReminder(string userId, int measurementReminderId);
     }
 }

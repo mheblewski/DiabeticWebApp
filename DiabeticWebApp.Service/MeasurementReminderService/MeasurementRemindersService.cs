@@ -32,9 +32,9 @@ namespace DiabeticWebApp.Service.MeasurementReminderService
             _repository.UpdateMeasurementReminder(userId, measurementReminderDto);
         }
 
-        public bool MeasurementReminderExists(string userId, int measurementReminderId)
+        public bool DoesMeasurementReminderExists(string userId, int measurementReminderId)
         {
-            return _repository.MeasurementReminderExists(userId, measurementReminderId);
+            return _repository.DoesMeasurementReminderExists(userId, measurementReminderId);
         }
 
         public void DeleteMeasurementReminder(string userId, int measurementReminderId)

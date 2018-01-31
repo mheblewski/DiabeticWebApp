@@ -80,7 +80,7 @@ namespace DiabeticWebApp.Repository.MeasurementRepositories
             _db.SaveChanges();
         }
 
-        public bool MeasurementExists(string userId, int measurementId)
+        public bool DoesMeasurementExists(string userId, int measurementId)
         {
             return _db.Measurements
                        .Where(m => m.UserId == userId)

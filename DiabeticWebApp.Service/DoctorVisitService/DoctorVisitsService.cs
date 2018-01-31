@@ -32,9 +32,9 @@ namespace DiabeticWebApp.Service.DoctorVisitService
             _repository.UpdateDoctorVisit(userId, doctorVisitDto);
         }
 
-        public bool DoctorVisitExists(string userId, int id)
+        public bool DoesDoctorVisitExists(string userId, int id)
         {
-            return _repository.DoctorVisitExists(userId, id);
+            return _repository.DoesDoctorVisitExists(userId, id);
         }
 
         public void DeleteDoctorVisit(string userId, int id)

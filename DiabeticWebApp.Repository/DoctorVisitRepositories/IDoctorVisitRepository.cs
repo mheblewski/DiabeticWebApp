@@ -12,7 +12,7 @@ namespace DiabeticWebApp.Repository.DoctorVisitRepositories
         List<DoctorVisitDto> GetDoctorVisits(string userId);
         void AddDoctorVisit(string userId, DoctorVisitDto doctorVisitDto);
         void UpdateDoctorVisit(string userId, DoctorVisitDto doctorVisitDto);
-        bool DoctorVisitExists(string userId, int id);
+        bool DoesDoctorVisitExists(string userId, int id);
         void DeleteDoctorVisit(string userId, int id);
     }
 }

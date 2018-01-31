@@ -12,6 +12,6 @@ namespace DiabeticWebApp.Service.MeasurementService
         List<MeasurementDto> GetMeasurements(string userId, DateTime dateFrom, DateTime? dateTo = null);
         void DeleteMeasurement(string userId, int measurementId);
         void UpdateMeasurement(string userId, MeasurementDto measurementDto);
-        bool MeasurementExists(string userId, int measurementId);
+        bool DoesMeasurementExists(string userId, int measurementId);
     }
 }
