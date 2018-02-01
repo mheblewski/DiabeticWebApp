@@ -81,7 +81,7 @@ namespace DiabeticWebApp.Controllers
     
         private string GetCurrentUserId()
         {
-            return HttpContext.Current.User.Identity.GetUserId();
+            return User.Identity.GetUserId();
         }
 
         #endregion
