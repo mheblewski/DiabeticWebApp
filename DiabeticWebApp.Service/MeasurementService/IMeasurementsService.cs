@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DiabeticWebApp.Models;
+using Dtos;
 
 namespace DiabeticWebApp.Service.MeasurementService
 {

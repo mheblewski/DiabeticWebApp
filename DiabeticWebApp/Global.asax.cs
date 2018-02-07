@@ -19,7 +19,7 @@ namespace DiabeticWebApp
             Dependencies.RegisterDependencies();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
+           // RouteConfig.RegisterRoutes(RouteTable.Routes);
             AutoMapperConfiguration.Configure();
         }   
     }

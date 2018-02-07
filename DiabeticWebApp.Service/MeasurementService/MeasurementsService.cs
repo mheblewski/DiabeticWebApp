@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DiabeticWebApp.Models;
 using DiabeticWebApp.Repository.MeasurementRepositories;
+using Dtos;
 
 namespace DiabeticWebApp.Service.MeasurementService
 {

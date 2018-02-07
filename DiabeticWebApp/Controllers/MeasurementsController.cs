@@ -11,6 +11,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using DiabeticWebApp.Models;
 using DiabeticWebApp.Service.MeasurementService;
+using Dtos;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security.Provider;
 
@@ -31,7 +32,10 @@ namespace DiabeticWebApp.Controllers
         {
             var userId = GetCurrentUserId();
             var measurementsList = _measurementsService.GetMeasurements(userId);
-            if (measurementsList.Count == 0) return StatusCode(HttpStatusCode.NoContent);
+            if (measurementsList.Count == 0)
+            {
+                return StatusCode(HttpStatusCode.NoContent);
+            }
             return Ok(measurementsList);
         }
 
@@ -41,6 +45,10 @@ namespace DiabeticWebApp.Controllers
         {
             var userId = GetCurrentUserId();
             var measurementsList = _measurementsService.GetMeasurements(userId, dateFrom);
+            if (measurementsList.Count == 0)
+            {
+                return StatusCode(HttpStatusCode.NoContent);
+            }
             return Ok(measurementsList);
         }
 
@@ -50,6 +58,10 @@ namespace DiabeticWebApp.Controllers
         {
             var userId = GetCurrentUserId();
             var measurementsList = _measurementsService.GetMeasurements(userId, dateFrom, dateTo);
+            if (measurementsList.Count == 0)
+            {
+                return StatusCode(HttpStatusCode.NoContent);
+            }
             return Ok(measurementsList);
         }
 
@@ -60,7 +72,7 @@ namespace DiabeticWebApp.Controllers
             var measurement = _measurementsService.GetMeasurement(userId, id);
             if (measurement == null)
             {
-                return StatusCode(HttpStatusCode.NoContent);
+                return StatusCode(HttpStatusCode.NotFound);
             }
             return Ok(measurement);
         }
@@ -110,13 +122,9 @@ namespace DiabeticWebApp.Controllers
             return Ok();
         }
 
-        #region Helpers
-
         private string GetCurrentUserId()
         {
             return User.Identity.GetUserId();
         }
-
-        #endregion
     }
 }
