@@ -111,28 +111,6 @@ namespace DiabeticWebApp.Tests.Controllers
         }
 
         [TestMethod]
-        public void UT_M_05_Given_InvalidMeasurementWithoutDate_When_PostThisMeasurement_Then_ShouldReturnInvalidModelState()
-        {
-            //Arrange
-            var measurement = TestMeasurements.DefaultMeasurement();
-            var measurementWithoutDate = measurement.WithNoDate().Build();
-
-            var validationContext = new ValidationContext(measurementWithoutDate, null, null);
-            var validationResults = new List<ValidationResult>();
-            Validator.TryValidateObject(measurementWithoutDate, validationContext, validationResults, true);
-            foreach (var validationResult in validationResults)
-            {
-                _controller.ModelState.AddModelError(validationResult.MemberNames.First(), validationResult.ErrorMessage);
-            }
-
-            //Act
-            var response = _controller.PostMeasurement(measurementWithoutDate);
-
-            //Assert
-            Assert.IsInstanceOfType(response, typeof(InvalidModelStateResult));
-        }
-
-        [TestMethod]
         public void UT_M_06_Given_InvalidMeasurementWithoutResult_When_PostThisMeasurement_Then_ShouldReturnInvalidModelState()
         {
             //Arrange

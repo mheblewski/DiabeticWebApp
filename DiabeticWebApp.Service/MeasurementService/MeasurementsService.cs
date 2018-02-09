@@ -16,6 +16,7 @@ namespace DiabeticWebApp.Service.MeasurementService
 
         public void AddMeasurement(string userId, MeasurementDto measurementDto)
         {
+            measurementDto.Date = DateTime.Now;
             _repository.InsertMeasurement(userId, measurementDto);
         }
 

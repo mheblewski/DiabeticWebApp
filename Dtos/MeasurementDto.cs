@@ -23,10 +23,6 @@ namespace Dtos
             {
                 results.Add(new ValidationResult("The Result must be positive number", new string[] { "Result" }));
             }
-            if (this.Date == new DateTime())
-            {
-                results.Add(new ValidationResult("The Date must be set", new string[] { "Date" }));
-            }
          
             return results;
         }
