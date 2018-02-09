@@ -107,8 +107,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\MeasurementBuilder.cs" />
     <Compile Include="Controllers\MeasurementsControllerTest.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestObjects\TestMeasurements.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />

@@ -17,6 +17,8 @@ using DiabeticWebApp.Controllers;
 using DiabeticWebApp.Models;
 using DiabeticWebApp.Repository.MeasurementRepositories;
 using DiabeticWebApp.Service.MeasurementService;
+using DiabeticWebApp.Tests.Builders;
+using DiabeticWebApp.Tests.TestObjects;
 using Dtos;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -29,80 +31,6 @@ namespace DiabeticWebApp.Tests.Controllers
         private Mock<IMeasurementsService> _mockService;
         private MeasurementsController _controller;
 
-        private const string TestDateString = "5/1/2008 8:30:52 AM";
-        private const string TestDescription = "test description 123!";
-        private const int TestResult = 123;
-
-        private readonly MeasurementDto _testValidMeasurement = new MeasurementDto
-        {
-            Id = 1,
-            Date = DateTime.Parse(TestDateString),
-            Description = TestDescription,
-            Result = TestResult
-        };
-
-        private readonly MeasurementDto _testInvalidMeasurementWithoutDate = new MeasurementDto
-        {
-            Id = 1,
-            Description = TestDescription,
-            Result = TestResult
-        };
-
-        private readonly MeasurementDto _testInvalidMeasurementWithoutResult = new MeasurementDto
-        {
-            Id = 1,
-            Date = DateTime.Parse(TestDateString),
-            Description = TestDescription,
-        };
-
-        private readonly MeasurementDto _testInvalidMeasurementWithNegativeResult = new MeasurementDto
-        {
-            Id = 1,
-            Date = DateTime.Parse(TestDateString),
-            Description = TestDescription,
-            Result = -25
-        };
-
-        private readonly List<MeasurementDto> _measurementsList = new List<MeasurementDto>{
-            new MeasurementDto {
-                Id = 1,
-                Date = DateTime.Parse("24/2/2018 9:54:22 AM"),
-                Description = "Description one",
-                Result = 11
-            },
-            new MeasurementDto {
-                Id = 2,
-                Date = DateTime.Parse("23/3/2018 3:23:11 PM"),
-                Description = "Description two",
-                Result = 22
-            },
-            new MeasurementDto {
-                Id = 3,
-                Date = DateTime.Parse("24/3/2018 9:54:22 AM"),
-                Description = "Description three",
-                Result = 11
-            },
-            new MeasurementDto {
-                Id = 4,
-                Date = DateTime.Parse("4/4/2018 3:23:11 PM"),
-                Description = "Description four",
-                Result = 22
-            },
-            new MeasurementDto {
-                Id = 5,
-                Date = DateTime.Parse("15/4/2018 9:54:22 AM"),
-                Description = "Description five",
-                Result = 11
-            },
-            new MeasurementDto {
-                Id = 6,
-                Date = DateTime.Parse("12/5/2018 3:23:11 PM"),
-                Description = "Description six",
-                Result = 22
-            }
-
-        };
-
         [TestInitialize]
         public void SetUp()
         {
@@ -111,154 +39,222 @@ namespace DiabeticWebApp.Tests.Controllers
         }
 
         [TestMethod]
-        public void GetMeasurement_ShouldReturnOkAndMeasurement()
+        public void UT_M_01_Given_MeasurementInDatabase_When_GetThisMeasurement_Then_ShouldReturnThisMeasurementWithOkCode()
         {
-            _mockService.Setup(x => x.GetMeasurement(It.IsAny<string>(), 1))
-                .Returns(_testValidMeasurement);
+            //Arrange
+            var measurement = TestMeasurements.DefaultMeasurement().Build();
 
-            var response = _controller.GetMeasurement(1);
+            _mockService.Setup(x => x.GetMeasurement(It.IsAny<string>(), measurement.Id))
+                .Returns(measurement);
+
+            //Act
+            var response = _controller.GetMeasurement(measurement.Id);
             var contentResult = response as OkNegotiatedContentResult<MeasurementDto>;         
 
+            //Assert
             Assert.IsNotNull(contentResult);
             Assert.IsNotNull(contentResult.Content);
-            Assert.AreEqual(1, contentResult.Content.Id);
-            Assert.AreEqual(DateTime.Parse(TestDateString), contentResult.Content.Date);
-            Assert.AreEqual(TestDescription, contentResult.Content.Description);
-            Assert.AreEqual(TestResult, contentResult.Content.Result);
+            Assert.AreEqual(measurement.Id, contentResult.Content.Id);
+            Assert.AreEqual(measurement.Date, contentResult.Content.Date);
+            Assert.AreEqual(measurement.Description, contentResult.Content.Description);
+            Assert.AreEqual(measurement.Result, contentResult.Content.Result);
         }
 
         [TestMethod]
-        public void GetAllMeasurements_ReturnsOkAndMeasurementsList()
+        public void UT_M_02_Given_MeasurementsInDatabase_When_GetAllUserMeasurements_Then_ShouldReturnAllUserMeasurementsWtihOkCode()
         {
+            //Arrange
+            var measurementsList = GetListOfFiveMeasurementsWithRandomData();
             _mockService.Setup(x => x.GetMeasurements(It.IsAny<string>()))
-                .Returns(_measurementsList);
+                .Returns(measurementsList);
 
+            //Act
             var response = _controller.GetMeasurements();
             var contentResult = response as OkNegotiatedContentResult<List<MeasurementDto>>;
 
+            //Assert
             Assert.IsNotNull(contentResult);
             Assert.IsNotNull(contentResult.Content);
-            Assert.AreEqual(_measurementsList, contentResult.Content);
+            Assert.AreEqual(measurementsList, contentResult.Content);
         }
 
         [TestMethod]
-        public void GetMeasurement_ShouldReturnsNotFound()
+        public void UT_M_03_Given_NoMeasurementWithThisIdInDatabase_When_GetMeasurementWithThisId_Then_ShouldReturnNotFoundCode()
         {
-            _mockService.Setup(x => x.GetMeasurement(It.IsAny<string>(), 1));
+            //Arrange
+            int idOfNotExistingMeasurement = 1;
+            _mockService.Setup(x => x.GetMeasurement(It.IsAny<string>(), idOfNotExistingMeasurement))
+                .Returns(() => null);
 
-            var response = _controller.GetMeasurement(1);
+            //Act
+            var response = _controller.GetMeasurement(idOfNotExistingMeasurement);
             var contentResult = response as StatusCodeResult;
 
+            //Assert
             Assert.AreEqual(HttpStatusCode.NotFound, contentResult.StatusCode);
         }
 
         [TestMethod]
-        public void PostValidMeasurement_ShouldReturnsOk()
+        public void UT_M_04_Given_ValidMeasurement_When_PostThisMeasurement_Then_ShouldReturnOkCode()
         {
-            _mockService.Setup(x => x.AddMeasurement(It.IsAny<string>(), _testValidMeasurement));
+            //Arrange
+            var measurement = TestMeasurements.DefaultMeasurement().Build();
 
-            var response = _controller.PostMeasurement(_testValidMeasurement);
+            _mockService.Setup(x => x.AddMeasurement(It.IsAny<string>(), measurement));
 
+            //Act
+            var response = _controller.PostMeasurement(measurement);
+
+
+            //Assert
             Assert.IsInstanceOfType(response, typeof(OkResult));
         }
 
         [TestMethod]
-        public void PostInvalidMeasurementWhenDateIsNotProvided_ShouldReturnsInvalidModelState()
+        public void UT_M_05_Given_InvalidMeasurementWithoutDate_When_PostThisMeasurement_Then_ShouldReturnInvalidModelState()
         {
-            var validationContext = new ValidationContext(_testInvalidMeasurementWithoutDate, null, null);
+            //Arrange
+            var measurement = TestMeasurements.DefaultMeasurement();
+            var measurementWithoutDate = measurement.WithNoDate().Build();
+
+            var validationContext = new ValidationContext(measurementWithoutDate, null, null);
             var validationResults = new List<ValidationResult>();
-            Validator.TryValidateObject(_testInvalidMeasurementWithoutDate, validationContext, validationResults, true);
+            Validator.TryValidateObject(measurementWithoutDate, validationContext, validationResults, true);
             foreach (var validationResult in validationResults)
             {
                 _controller.ModelState.AddModelError(validationResult.MemberNames.First(), validationResult.ErrorMessage);
             }
 
-            var response = _controller.PostMeasurement(_testInvalidMeasurementWithoutDate);
+            //Act
+            var response = _controller.PostMeasurement(measurementWithoutDate);
 
+            //Assert
             Assert.IsInstanceOfType(response, typeof(InvalidModelStateResult));
         }
 
         [TestMethod]
-        public void PostInvalidMeasurementWhenResultIsNotProvided_ShouldReturnsInvalidModelState()
+        public void UT_M_06_Given_InvalidMeasurementWithoutResult_When_PostThisMeasurement_Then_ShouldReturnInvalidModelState()
         {
-            var validationContext = new ValidationContext(_testInvalidMeasurementWithoutResult, null, null);
+            //Arrange
+            var measurement = TestMeasurements.DefaultMeasurement();
+            var measurementWithoutResult = measurement.WithNoResult().Build();
+
+            var validationContext = new ValidationContext(measurementWithoutResult, null, null);
             var validationResults = new List<ValidationResult>();
-            Validator.TryValidateObject(_testInvalidMeasurementWithoutResult, validationContext, validationResults, true);
+            Validator.TryValidateObject(measurementWithoutResult, validationContext, validationResults, true);
             foreach (var validationResult in validationResults)
             {
                 _controller.ModelState.AddModelError(validationResult.MemberNames.First(), validationResult.ErrorMessage);
             }
 
-            var response = _controller.PostMeasurement(_testInvalidMeasurementWithoutResult);
+            //Act
+            var response = _controller.PostMeasurement(measurementWithoutResult);
 
+            //Assert
             Assert.IsInstanceOfType(response, typeof(InvalidModelStateResult));
         }
 
         [TestMethod]
-        public void PostInvalidMeasurementWhenResultIsNegativeNumber_ShouldReturnsInvalidModelState()
+        public void UT_M_07_Given_InvalidMeasurementWithNegativeResult_When_PostThisMeasurement_Then_ShouldReturnInvalidModelState()
         {
-            var validationContext = new ValidationContext(_testInvalidMeasurementWithNegativeResult, null, null);
+            //Arrange
+            var measurement = TestMeasurements.DefaultMeasurement();
+            var measurementWithNegativeResult = measurement.WithNegativeResult().Build();
+
+            var validationContext = new ValidationContext(measurementWithNegativeResult, null, null);
             var validationResults = new List<ValidationResult>();
-            Validator.TryValidateObject(_testInvalidMeasurementWithNegativeResult, validationContext, validationResults, true);
+            Validator.TryValidateObject(measurementWithNegativeResult, validationContext, validationResults, true);
             foreach (var validationResult in validationResults)
             {
                 _controller.ModelState.AddModelError(validationResult.MemberNames.First(), validationResult.ErrorMessage);
             }
 
-            var response = _controller.PostMeasurement(_testInvalidMeasurementWithNegativeResult);
+            //Act
+            var response = _controller.PostMeasurement(measurementWithNegativeResult);
 
+            //Assert
             Assert.IsInstanceOfType(response, typeof(InvalidModelStateResult));
         }
 
         [TestMethod]
-        public void PutMeasurementUsingValidData_ShouldReturnsOk()
+        public void UT_M_08_Given_MeasurementInDatabase_When_PutAnotherMeasurementOnTheIdOfThisMeasurement_Then_ShouldReturnOkCode()
         {
+            //Arrange
+            var measurement = TestMeasurements.DefaultMeasurement().Build();
+            var newMeasurement = TestMeasurements.RandomMeasurement().Build();
+
             _mockService.Setup(x => x.DoesMeasurementExists(It.IsAny<string>(), It.IsAny<int>()))
                 .Returns(true);
-            _mockService.Setup(x => x.UpdateMeasurement(It.IsAny<string>(), _testValidMeasurement));          
-            _controller.PostMeasurement(_testValidMeasurement);
+            _mockService.Setup(x => x.UpdateMeasurement(It.IsAny<string>(), measurement));
+            _controller.PostMeasurement(measurement);
 
-            var response = _controller.PutMeasurement(_testValidMeasurement.Id, _measurementsList[2]);
+            //Act
+            var response = _controller.PutMeasurement(measurement.Id, newMeasurement);
 
+            //Assert
             Assert.IsInstanceOfType(response, typeof(OkResult));
         }
 
         [TestMethod]
-        public void PutNotExistingMeasurement_ShouldReturnsNotFound()
+        public void UT_M_09_Given_NoMeasurementInDatabaseWithThisId_When_PutAnotherMeasurementOnThisId_Then_ShouldReturnNotFoundCode()
         {
+            //Arrange
+            var measurement = TestMeasurements.DefaultMeasurement().Build();
             _mockService.Setup(x => x.DoesMeasurementExists(It.IsAny<string>(), It.IsAny<int>()))
                 .Returns(false);
-            _mockService.Setup(x => x.UpdateMeasurement(It.IsAny<string>(), _testValidMeasurement));
+            _mockService.Setup(x => x.UpdateMeasurement(It.IsAny<string>(), measurement));
 
-            var response = _controller.PutMeasurement(_testValidMeasurement.Id, _measurementsList[2]);
+            //Act
+            var response = _controller.PutMeasurement(measurement.Id, measurement);
             var contentResult = response as StatusCodeResult;
 
+            //Assert
             Assert.AreEqual(HttpStatusCode.NotFound, contentResult.StatusCode);
         }
 
         [TestMethod]
-        public void DeleteExisitngMeasurement_ShouldReturnsOk()
+        public void UT_M_10_Given_MeasurementInDatabase_When_DeleteThisMeasurement_Then_ShouldReturnOkCode()
         {
-            _mockService.Setup(x => x.DoesMeasurementExists(It.IsAny<string>(), It.IsAny<int>()))
+            //Arrange
+            var idOfExistingMeasurement = 1;
+            _mockService.Setup(x => x.DoesMeasurementExists(It.IsAny<string>(), idOfExistingMeasurement))
                 .Returns(true);
-            _mockService.Setup(x => x.DeleteMeasurement(It.IsAny<string>(), It.IsAny<int>()));
+            _mockService.Setup(x => x.DeleteMeasurement(It.IsAny<string>(), idOfExistingMeasurement));
 
-            var response = _controller.DeleteMeasurement(1);
+            //act
+            var response = _controller.DeleteMeasurement(idOfExistingMeasurement);
 
+            //Assert
             Assert.IsInstanceOfType(response, typeof(OkResult));
         }
 
         [TestMethod]
-        public void DeleteNotExisitngMeasurement_ShouldReturnsNotFound()
+        public void UT_M_11_Given_NoMeasurementInDatabaseWithThisId_When_DeleteMeasurementWithThisId_Then_ShouldReturnNotFoundCode()
         {
-            _mockService.Setup(x => x.DoesMeasurementExists(It.IsAny<string>(), It.IsAny<int>()))
+            //Arrange
+            var idOfNotExistingMeasurement = 1;
+            _mockService.Setup(x => x.DoesMeasurementExists(It.IsAny<string>(), idOfNotExistingMeasurement))
                 .Returns(false);
-            _mockService.Setup(x => x.DeleteMeasurement(It.IsAny<string>(), It.IsAny<int>()));
+            _mockService.Setup(x => x.DeleteMeasurement(It.IsAny<string>(), idOfNotExistingMeasurement));
 
+            //Act
             var response = _controller.DeleteMeasurement(1);
             var contentResult = response as StatusCodeResult;
 
+            //Assert
             Assert.AreEqual(HttpStatusCode.NotFound, contentResult.StatusCode);
+        }
+
+        private List<MeasurementDto> GetListOfFiveMeasurementsWithRandomData()
+        {
+            List<MeasurementDto> measurementsList = new List<MeasurementDto>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                measurementsList.Add(TestMeasurements.RandomMeasurement().WithId(i).Build());
+            }
+
+            return measurementsList;
         }
     }
 }
